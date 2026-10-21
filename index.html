@@ -15,11 +15,43 @@
     .sticky-nav {
       position: sticky; top: 0; z-index: 100;
       backdrop-filter: blur(8px);
-      background: rgba(255,255,255,.92);
-      border-bottom: 1px solid var(--tblr-border-color);
+      background: rgba(255,255,255,.96);
+      border-bottom: 0;
+      box-shadow: none;
     }
-    .sticky-nav .nav-link { color: var(--tblr-secondary); font-size: .8125rem; }
-    .sticky-nav .nav-link:hover, .sticky-nav .nav-link.active { color: var(--tblr-primary); }
+    .sticky-nav .nav {
+      gap: .15rem;
+      border: 0 !important;
+    }
+    .sticky-nav .nav-item {
+      border: 0 !important;
+    }
+    .sticky-nav .nav-link {
+      color: #64748b;
+      font-size: .8125rem;
+      font-weight: 550;
+      letter-spacing: .01em;
+      padding: .4rem .7rem !important;
+      border: 0 !important;
+      border-bottom: 0 !important;
+      border-radius: 999px;
+      transition: color .15s ease, background .15s ease;
+    }
+    .sticky-nav .nav-link:hover,
+    .sticky-nav .nav-link:focus {
+      color: var(--tblr-teal);
+      background: rgba(18, 183, 106, 0.1);
+    }
+    .sticky-nav .nav-link.active {
+      color: var(--tblr-teal);
+      background: rgba(18, 183, 106, 0.14);
+      font-weight: 600;
+    }
+    .sticky-nav .brand-mark {
+      font-size: .9375rem;
+      letter-spacing: -.01em;
+      color: #1e293b;
+    }
     /* плотнее к шапке: без большого зазора Tabler page-body */
     .page-wrapper .page-body {
       margin-top: 0;
@@ -248,7 +280,7 @@
         <i class="ti ti-heart-handshake text-teal" style="font-size:1.5rem; line-height:1;"></i>
         ВИРТУ + РГС = Друзья на всегда
       </div>
-      <ul class="nav nav-bordered ms-auto flex-wrap">
+      <ul class="nav ms-auto flex-wrap align-items-center">
         <li class="nav-item"><a class="nav-link" href="#hero">Старт</a></li>
         <li class="nav-item"><a class="nav-link" href="#platform">Платформа</a></li>
         <li class="nav-item"><a class="nav-link" href="#org">Оргпуть</a></li>
