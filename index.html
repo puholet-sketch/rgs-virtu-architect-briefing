@@ -125,38 +125,6 @@
     .chart-box-lg { height: 380px; }
     .chart-box-sm { height: 260px; }
     .kpi-delta { font-size: .75rem; }
-    .infographic-step {
-      position: relative; text-align: center; padding: 1rem .5rem;
-    }
-    .infographic-step .icon-wrap {
-      position: relative;
-      display: inline-flex; align-items: center; justify-content: center;
-      margin: 0 auto .75rem;
-      background: transparent !important;
-      box-shadow: none !important;
-      border: 0 !important;
-      width: auto !important;
-      height: auto !important;
-      padding: 0 !important;
-      border-radius: 0 !important;
-      color: var(--tblr-primary);
-      font-size: 1.85rem;
-      line-height: 1;
-    }
-    .infographic-step .icon-wrap .ti {
-      background: transparent !important;
-      font-size: 1.85rem;
-      line-height: 1;
-    }
-    .infographic-step .step-num {
-      position: absolute; top: -0.35rem; right: -1rem;
-      background: transparent !important;
-      color: var(--tblr-primary);
-      font-size: .8rem; font-weight: 700; line-height: 1;
-      width: auto; height: auto; border-radius: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .infographic-step h4 { margin-bottom: .4rem; }
     .channel-legend .ch-icon {
       font-size: 1.75rem; line-height: 1; flex-shrink: 0;
       background: none !important; width: auto; height: auto;
@@ -283,7 +251,6 @@
       <ul class="nav ms-auto flex-wrap align-items-center">
         <li class="nav-item"><a class="nav-link" href="#hero">Старт</a></li>
         <li class="nav-item"><a class="nav-link" href="#platform">Платформа</a></li>
-        <li class="nav-item"><a class="nav-link" href="#org">Оргпуть</a></li>
         <li class="nav-item"><a class="nav-link" href="#facts">Факты</a></li>
         <li class="nav-item"><a class="nav-link" href="#api">API</a></li>
         <li class="nav-item"><a class="nav-link" href="#scenarios">Сценарии</a></li>
@@ -391,7 +358,7 @@
         </div>
 
         <!-- KPI -->
-        <div class="row row-deck row-cards mt-3">
+        <div class="row row-deck row-cards mt-3 section-anchor" id="kpi">
           <div class="col-sm-6 col-lg-3">
             <div class="card"><div class="card-body">
               <div class="subheader">Продажи 2026 · все каналы</div>
@@ -461,46 +428,6 @@
           </div>
         </div>
 
-        <!-- ORG PATH -->
-        <div class="card mt-3 section-anchor" id="org">
-          <div class="card-header">
-            <h3 class="card-title"><i class="ti ti-route text-blue"></i> Оргпуть · Симакин 20.10.2026</h3>
-            <div class="card-subtitle">Эта встреча — шаг 1: техконцепт, не «оставьте нас»</div>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-4 infographic-step">
-                <div class="icon-wrap">
-                  <span class="step-num">1</span>
-                  <i class="ti ti-topology-star-3"></i>
-                </div>
-                <h4>Григорьев Денис</h4>
-                <div class="text-secondary">Архитектор. Техконцепт. Финального «да» не принимает. Писать можно напрямую.</div>
-              </div>
-              <div class="col-md-4 infographic-step">
-                <div class="icon-wrap">
-                  <span class="step-num">2</span>
-                  <i class="ti ti-briefcase"></i>
-                </div>
-                <h4>Бизнес · Евдокимова</h4>
-                <div class="text-secondary">Нужна позиция бизнеса: какие продукты и роли оставить на Virtu (калькулятор, СКЗИ, API, оплата). Не путать с платформой партнёров на Импульсе.</div>
-              </div>
-              <div class="col-md-4 infographic-step">
-                <div class="icon-wrap">
-                  <span class="step-num">3</span>
-                  <i class="ti ti-gavel"></i>
-                </div>
-                <h4>Крымова + Шайхотаров</h4>
-                <div class="text-secondary">Только после техники и бизнеса. Крымова — правление, Импульс, процессы.</div>
-              </div>
-            </div>
-            <div class="alert alert-warning mt-3 mb-0">
-              <div class="d-flex"><div><i class="ti ti-alert-triangle me-2"></i></div>
-              <div><strong>Стоп:</strong> без поддержки бизнеса к Крымовой не ходить.</div></div>
-            </div>
-          </div>
-        </div>
-
         <!-- FACTS / CHANNELS -->
         <div class="row row-deck row-cards mt-3 section-anchor" id="facts">
           <div class="col-lg-8">
@@ -539,7 +466,7 @@
           </div>
         </div>
 
-        <div class="card mt-3">
+        <div class="card mt-3 section-anchor" id="channels">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-arrows-split-2 text-blue"></i> Каналы продаж</h3>
             <div class="card-subtitle">Как полис попал в реестр</div>
@@ -586,7 +513,7 @@
           </div>
         </div>
 
-        <div class="row row-cards mt-3 loader-pair align-items-stretch">
+        <div class="row row-cards mt-3 loader-pair align-items-stretch section-anchor" id="loader">
           <div class="col-lg-5">
             <div class="card">
               <div class="card-header">
@@ -625,7 +552,7 @@
           </div>
         </div>
 
-        <div class="card mt-3">
+        <div class="card mt-3 section-anchor" id="recon">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-calendar-stats text-blue"></i> Статистика продаж по системе · помесячно</h3>
           </div>
@@ -669,7 +596,7 @@
           </div>
         </div>
 
-        <div class="card mt-3 fam-sync">
+        <div class="card mt-3 fam-sync section-anchor" id="families">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-stack-2 text-blue"></i> Семейства продуктов × каналы</h3>
             <div class="card-subtitle">Полисы 2026 · график и сводка в одном ритме</div>
