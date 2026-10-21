@@ -58,10 +58,20 @@
       padding-top: .5rem;
       padding-bottom: 1.5rem;
     }
+    #intro {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    #intro > .card:first-child,
     #hero {
       margin-top: 0 !important;
       border-top-left-radius: 0;
       border-top-right-radius: 0;
+    }
+    #intro #platform,
+    #intro #kpi {
+      margin-top: 0 !important;
     }
     .sticky-nav + .page-wrapper {
       margin-top: 0;
@@ -374,8 +384,7 @@
         ВИРТУ + РГС = Друзья на всегда
       </div>
       <ul class="nav ms-auto flex-wrap align-items-center">
-        <li class="nav-item"><a class="nav-link" href="#hero">Старт</a></li>
-        <li class="nav-item"><a class="nav-link" href="#platform">Платформа</a></li>
+        <li class="nav-item"><a class="nav-link" href="#intro">Старт</a></li>
         <li class="nav-item"><a class="nav-link" href="#facts">Факты</a></li>
         <li class="nav-item"><a class="nav-link" href="#api">API</a></li>
         <li class="nav-item"><a class="nav-link" href="#scenarios">Сценарии</a></li>
@@ -390,128 +399,128 @@
     <div class="page-body">
       <div class="container-xl">
 
-        <!-- HERO -->
-        <div class="card mt-0 section-anchor" id="hero">
-          <div class="card-header">
-            <h3 class="card-title"><i class="ti ti-layers-intersect text-blue"></i> ВИРТУ в усиление Импульсу</h3>
-            <div class="card-subtitle">ресурсно и платформенно</div>
-            <div class="text-secondary small mt-1">Брифинг для архитектора РГС · 21.10.2026</div>
-          </div>
-          <div class="card-body">
-            <div class="row g-3 align-items-center">
-              <div class="col-lg-8">
-                <p class="mb-0">
-                  <span class="hero-tagline">Не конкурируем с платформой — снимаем с неё лишнее.</span>
-                </p>
-              </div>
-              <div class="col-lg-4">
-                <div class="border rounded p-3 h-100">
-                  <div class="subheader mb-1">Период цифр</div>
-                  <div class="fw-bold">01.01 – 20.10.2026</div>
-                  <div class="text-secondary small mt-1">Боевая база полисов РГС · октябрь неполный</div>
+        <!-- INTRO = hero + platform + KPI (один экран для PDF/PPTX) -->
+        <div class="section-anchor" id="intro">
+          <div class="card mt-0" id="hero">
+            <div class="card-header">
+              <h3 class="card-title"><i class="ti ti-layers-intersect text-blue"></i> ВИРТУ в усиление Импульсу</h3>
+              <div class="card-subtitle">ресурсно и платформенно</div>
+              <div class="text-secondary small mt-1">Брифинг для архитектора РГС · 21.10.2026</div>
+            </div>
+            <div class="card-body">
+              <div class="row g-3 align-items-center">
+                <div class="col-lg-8">
+                  <p class="mb-0">
+                    <span class="hero-tagline">Не конкурируем с платформой — снимаем с неё лишнее.</span>
+                  </p>
+                </div>
+                <div class="col-lg-4">
+                  <div class="border rounded p-3 h-100">
+                    <div class="subheader mb-1">Период цифр</div>
+                    <div class="fw-bold">01.01 – 20.10.2026</div>
+                    <div class="text-secondary small mt-1">Боевая база полисов РГС · октябрь неполный</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- PLATFORM OVERVIEW -->
-        <div class="card mt-3 section-anchor" id="platform">
-          <div class="card-header">
-            <h3 class="card-title"><i class="ti ti-building text-blue"></i> Платформа Virtu у Росгосстраха</h3>
-            <div class="card-subtitle">Партнёрский канал · общая картина 2026</div>
+          <div class="card" id="platform">
+            <div class="card-header">
+              <h3 class="card-title"><i class="ti ti-building text-blue"></i> Платформа Virtu у Росгосстраха</h3>
+              <div class="card-subtitle">Партнёрский канал · общая картина 2026</div>
+            </div>
+            <div class="card-body">
+              <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3">
+                  <div class="h1 mb-0">80+</div>
+                  <div class="text-secondary small">основных продуктов</div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <div class="h1 mb-0">1&nbsp;300+</div>
+                  <div class="text-secondary small">версий продуктов</div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <div class="h1 mb-0">70&nbsp;000+</div>
+                  <div class="text-secondary small">полисов ежемесячно</div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <div class="h1 mb-0">10+ млрд</div>
+                  <div class="text-secondary small">₽ премий в год</div>
+                </div>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-3">
+                  <div class="border rounded p-3 h-100">
+                    <div class="fw-bold mb-1"><i class="ti ti-car me-1 text-blue"></i>Авто</div>
+                    <div class="text-secondary small">14 продуктов · 26 версий</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="border rounded p-3 h-100">
+                    <div class="fw-bold mb-1"><i class="ti ti-heartbeat me-1 text-red"></i>ДМС и НС</div>
+                    <div class="text-secondary small">26 продуктов · 831 версия</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="border rounded p-3 h-100">
+                    <div class="fw-bold mb-1"><i class="ti ti-plane me-1 text-azure"></i>ВЗР</div>
+                    <div class="text-secondary small">7 продуктов · 314 версий</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="border rounded p-3 h-100">
+                    <div class="fw-bold mb-1"><i class="ti ti-home me-1 text-green"></i>ИФЛ</div>
+                    <div class="text-secondary small">31 продукт · 139 версий</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="text-secondary small">
+                    <strong class="text-body">Virtu Systems</strong> — долгосрочный ИТ-партнёр РГС: знает процессы, интеграции и требования ДИТ/бизнеса.
+                    Проектная команда ведёт сопровождение действующих и разработку новых продуктов.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="text-secondary small">
+                    Техподдержка — более 100 обращений в сутки, 24/7.
+                    Инфраструктурный блок обеспечивает работу платформ, серверов, сетей и приложений, в т.ч. защиту ПДн.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <div class="row g-3 mb-3">
-              <div class="col-6 col-md-3">
-                <div class="h1 mb-0">80+</div>
-                <div class="text-secondary small">основных продуктов</div>
-              </div>
-              <div class="col-6 col-md-3">
-                <div class="h1 mb-0">1&nbsp;300+</div>
-                <div class="text-secondary small">версий продуктов</div>
-              </div>
-              <div class="col-6 col-md-3">
-                <div class="h1 mb-0">70&nbsp;000+</div>
-                <div class="text-secondary small">полисов ежемесячно</div>
-              </div>
-              <div class="col-6 col-md-3">
-                <div class="h1 mb-0">10+ млрд</div>
-                <div class="text-secondary small">₽ премий в год</div>
-              </div>
-            </div>
-            <div class="row g-2 mb-3">
-              <div class="col-md-3">
-                <div class="border rounded p-3 h-100">
-                  <div class="fw-bold mb-1"><i class="ti ti-car me-1 text-blue"></i>Авто</div>
-                  <div class="text-secondary small">14 продуктов · 26 версий</div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="border rounded p-3 h-100">
-                  <div class="fw-bold mb-1"><i class="ti ti-heartbeat me-1 text-red"></i>ДМС и НС</div>
-                  <div class="text-secondary small">26 продуктов · 831 версия</div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="border rounded p-3 h-100">
-                  <div class="fw-bold mb-1"><i class="ti ti-plane me-1 text-azure"></i>ВЗР</div>
-                  <div class="text-secondary small">7 продуктов · 314 версий</div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="border rounded p-3 h-100">
-                  <div class="fw-bold mb-1"><i class="ti ti-home me-1 text-green"></i>ИФЛ</div>
-                  <div class="text-secondary small">31 продукт · 139 версий</div>
-                </div>
-              </div>
-            </div>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <div class="text-secondary small">
-                  <strong class="text-body">Virtu Systems</strong> — долгосрочный ИТ-партнёр РГС: знает процессы, интеграции и требования ДИТ/бизнеса.
-                  Проектная команда ведёт сопровождение действующих и разработку новых продуктов.
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="text-secondary small">
-                  Техподдержка — более 100 обращений в сутки, 24/7.
-                  Инфраструктурный блок обеспечивает работу платформ, серверов, сетей и приложений, в т.ч. защиту ПДн.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- KPI -->
-        <div class="row row-deck row-cards mt-3 section-anchor" id="kpi">
-          <div class="col-sm-6 col-lg-3">
-            <div class="card"><div class="card-body">
-              <div class="subheader">Продажи 2026 · все каналы</div>
-              <div class="h1 mb-0">1 090 372</div>
-              <div class="kpi-delta text-blue mt-1">действующих/акцепт. 900 086</div>
-            </div></div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="card"><div class="card-body">
-              <div class="subheader">Через API</div>
-              <div class="h1 mb-0">485 761</div>
-              <div class="kpi-delta text-green mt-1">45% от всех продаж</div>
-            </div></div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="card"><div class="card-body">
-              <div class="subheader">Интеграции / продукты</div>
-              <div class="h1 mb-0">738 <span class="text-secondary fs-3">/ 151</span></div>
-              <div class="kpi-delta text-purple mt-1">топ-5 интеграций = 86% API</div>
-            </div></div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="card"><div class="card-body">
-              <div class="subheader">МВД + ММЦ (СКЗИ)</div>
-              <div class="h1 mb-0">148 966</div>
-              <div class="kpi-delta text-azure mt-1">31% от API · 13,7% от всех продаж</div>
-            </div></div>
+          <div class="row row-deck row-cards" id="kpi">
+            <div class="col-sm-6 col-lg-3">
+              <div class="card"><div class="card-body">
+                <div class="subheader">Продажи 2026 · все каналы</div>
+                <div class="h1 mb-0">1 090 372</div>
+                <div class="kpi-delta text-blue mt-1">действующих/акцепт. 900 086</div>
+              </div></div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="card"><div class="card-body">
+                <div class="subheader">Через API</div>
+                <div class="h1 mb-0">485 761</div>
+                <div class="kpi-delta text-green mt-1">45% от всех продаж</div>
+              </div></div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="card"><div class="card-body">
+                <div class="subheader">Интеграции / продукты</div>
+                <div class="h1 mb-0">738 <span class="text-secondary fs-3">/ 151</span></div>
+                <div class="kpi-delta text-purple mt-1">топ-5 интеграций = 86% API</div>
+              </div></div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="card"><div class="card-body">
+                <div class="subheader">МВД + ММЦ (СКЗИ)</div>
+                <div class="h1 mb-0">148 966</div>
+                <div class="kpi-delta text-azure mt-1">31% от API · 13,7% от всех продаж</div>
+              </div></div>
+            </div>
           </div>
         </div>
 
