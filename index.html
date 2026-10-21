@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Virtu × РГС — целевая архитектура</title>
+  <link rel="stylesheet" href="vendor/tabler.min.css">
+  <link rel="stylesheet" href="vendor/tabler-icons.min.css">
+  <style>
+    :root {
+      --tblr-font-sans-serif: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+    }
+    body { background: var(--tblr-bg-surface-tertiary, #f1f5f9); }
+    .page-title { letter-spacing: -0.02em; }
+    .sticky-nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(8px);
+      background: rgba(255,255,255,.92);
+      border-bottom: 1px solid var(--tblr-border-color);
+    }
+    .sticky-nav .nav-link { color: var(--tblr-secondary); font-size: .8125rem; }
+    .sticky-nav .nav-link:hover, .sticky-nav .nav-link.active { color: var(--tblr-primary); }
+    .section-anchor { scroll-margin-top: 72px; }
+    .hero-tagline {
+      display: inline;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      font-weight: 600;
+      color: var(--tblr-teal);
+      background: linear-gradient(transparent 58%, rgba(18, 183, 106, 0.22) 58%);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      padding: 0 .15em;
+    }
+    /* title + subtitle: колонка с нормальным зазором */
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: .35rem;
+      padding-top: 1.1rem;
+      padding-bottom: 1.1rem;
+      min-height: 4.5rem;
+    }
+    .card-header .card-title {
+      margin: 0;
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+    }
+    .card-header .card-title .ti {
+      font-size: 1.35rem;
+      line-height: 1;
+      flex-shrink: 0;
+      background: none !important;
+    }
+    /* единый формат иконок: контур, без цветного квадрата */
+    .ico {
+      font-size: 1.75rem; line-height: 1; flex-shrink: 0;
+      background: none !important; width: auto !important; height: auto !important;
+      border-radius: 0 !important; padding: 0 !important; display: inline-flex;
+    }
+    .scenario-ico {
+      font-size: 1.75rem; line-height: 1; flex-shrink: 0; margin-top: .1rem;
+      background: none !important;
+    }
+    .card-header .card-subtitle {
+      margin: 0;
+      padding: 0;
+      font-size: .8125rem;
+      line-height: 1.4;
+      color: var(--tblr-secondary);
+      max-width: 100%;
+      min-height: 1.15rem;
+    }
+    .card-body { padding-top: 1rem; }
+    .chart-box { width: 100%; height: 320px; }
+    .chart-box-lg { height: 380px; }
+    .chart-box-sm { height: 260px; }
+    .kpi-delta { font-size: .75rem; }
+    .infographic-step {
+      position: relative; text-align: center; padding: 1rem .5rem;
+    }
+    .infographic-step .icon-wrap {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin: 0 auto .75rem;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      color: var(--tblr-primary);
+      font-size: 1.85rem;
+      line-height: 1;
+    }
+    .infographic-step .icon-wrap .ti {
+      background: transparent !important;
+      font-size: 1.85rem;
+      line-height: 1;
+    }
+    .infographic-step .step-num {
+      position: absolute; top: -0.35rem; right: -1rem;
+      background: transparent !important;
+      color: var(--tblr-primary);
+      font-size: .8rem; font-weight: 700; line-height: 1;
+      width: auto; height: auto; border-radius: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .infographic-step h4 { margin-bottom: .4rem; }
+    .channel-legend .ch-icon {
+      font-size: 1.75rem; line-height: 1; flex-shrink: 0;
+      background: none !important; width: auto; height: auto;
+      border-radius: 0; display: inline-flex; padding: 0;
+    }
+    .channel-legend .ch-card {
+      padding: 1.15rem 1.25rem; height: 100%;
+      border: 1px solid var(--tblr-border-color);
+      border-radius: var(--tblr-border-radius);
+      background: #fff;
+    }
+    .channel-legend .ch-card h4 {
+      margin: 0; font-size: 1rem; line-height: 1.3;
+    }
+    .channel-legend .ch-meta {
+      font-size: .75rem; color: var(--tblr-secondary); margin-top: .15rem;
+    }
+    .channel-legend .ch-body {
+      margin-top: .75rem; font-size: .8125rem; color: var(--tblr-secondary); line-height: 1.45;
+    }
+    .ask-list { list-style: none; margin: 0; padding: 0; }
+    .ask-list li {
+      display: flex; gap: .9rem; align-items: flex-start;
+      padding: .95rem 1.25rem;
+      border-top: 1px solid var(--tblr-border-color);
+      line-height: 1.45;
+    }
+    .ask-list li:first-child { border-top: 0; }
+    .ask-list .ask-n {
+      flex: 0 0 1.5rem;
+      display: inline-flex; align-items: center; justify-content: flex-start;
+      font-size: 1rem; font-weight: 700;
+      color: var(--tblr-primary);
+      background: transparent !important;
+      line-height: 1.35; margin-top: 0;
+      border: 0; border-radius: 0; width: auto; height: auto;
+      padding: 0;
+    }
+    .table-fam th { white-space: nowrap; font-size: .7rem; letter-spacing: .02em; }
+    .table-fam td { vertical-align: middle; }
+    .table-fam .fam-name { font-weight: 500; min-width: 9rem; }
+    .table-fam .fam-bar {
+      display: inline-block; width: 3.25rem; height: .35rem;
+      background: var(--tblr-border-color); border-radius: 2px; overflow: hidden; flex-shrink: 0;
+    }
+    .table-fam .fam-bar > span {
+      display: block; height: 100%; background: var(--tblr-primary); border-radius: 2px;
+    }
+    /* семейства: одна карточка, строки таблицы тянутся под полосы графика */
+    .fam-sync .chart-box-fam { height: 400px; }
+    .fam-sync .table-fam { height: 400px; margin: 0; }
+    .fam-sync .table-fam thead th {
+      height: 2.25rem; padding-top: .4rem; padding-bottom: .4rem;
+      border-bottom-width: 1px;
+    }
+    .fam-sync .table-fam tbody { height: calc(400px - 2.25rem); }
+    .fam-sync .table-fam tbody tr { height: calc((400px - 2.25rem) / 8); }
+    .fam-sync .table-fam tbody td { padding-top: .35rem; padding-bottom: .35rem; }
+    .fam-legend {
+      display: flex; flex-wrap: wrap; gap: .75rem 1.1rem;
+      font-size: .8125rem; color: var(--tblr-secondary); margin-bottom: .75rem;
+    }
+    .fam-legend i {
+      display: inline-block; width: .65rem; height: .65rem; border-radius: 2px;
+      margin-right: .35rem; vertical-align: .1rem;
+    }
+    .pie-legend { list-style: none; margin: .85rem 0 0; padding: 0; }
+    .pie-legend li {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .4rem 0;
+      border-top: 1px solid var(--tblr-border-color);
+      font-size: .8125rem;
+    }
+    .pie-legend li:first-child { border-top: 0; padding-top: 0; }
+    .pie-legend .dot {
+      width: .65rem; height: .65rem; border-radius: 2px; flex-shrink: 0;
+    }
+    .pie-legend .name { color: var(--tblr-secondary); flex: 1; min-width: 0; }
+    .pie-legend .val { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .pie-legend .share {
+      color: var(--tblr-secondary); font-variant-numeric: tabular-nums;
+      min-width: 3.2rem; text-align: right; white-space: nowrap;
+    }
+    .pay-table th { white-space: nowrap; }
+    .pay-table td { vertical-align: top; }
+    .table-loader { margin-bottom: 0; }
+    .table-loader tbody tr:last-child > * { border-bottom: 0 !important; }
+    .loader-pair .card { height: 100%; display: flex; flex-direction: column; }
+    .loader-pair .table-responsive { flex: 1 1 auto; }
+    .pipeline-block {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .pipeline {
+      display: inline-flex; flex-wrap: wrap; gap: .5rem;
+      align-items: center; justify-content: center;
+      max-width: 100%;
+    }
+    .pipeline .pipe-item {
+      background: #fff; border: 1px solid var(--tblr-border-color);
+      border-radius: var(--tblr-border-radius); padding: .65rem .9rem;
+      font-size: .8125rem; display: flex; align-items: center; gap: .4rem;
+    }
+    .pipeline .arrow { color: var(--tblr-secondary); }
+    .role-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; margin-bottom: .55rem; line-height: 1;
+      background: none !important; width: auto; height: auto; border-radius: 0;
+    }
+    footer.page-foot { font-size: .75rem; color: var(--tblr-secondary); padding: 2rem 0 3rem; }
+    @media print {
+      .sticky-nav { position: static; }
+      .card { break-inside: avoid; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sticky-nav">
+    <div class="container-xl py-2 d-flex flex-wrap align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2 fw-bold">
+        <span class="avatar avatar-sm bg-primary-lt text-primary fw-bold" style="font-size:.75rem">V</span>
+        Virtu × РГС
+      </div>
+      <ul class="nav nav-bordered ms-auto flex-wrap">
+        <li class="nav-item"><a class="nav-link" href="#hero">Старт</a></li>
+        <li class="nav-item"><a class="nav-link" href="#platform">Платформа</a></li>
+        <li class="nav-item"><a class="nav-link" href="#org">Оргпуть</a></li>
+        <li class="nav-item"><a class="nav-link" href="#facts">Факты</a></li>
+        <li class="nav-item"><a class="nav-link" href="#api">API</a></li>
+        <li class="nav-item"><a class="nav-link" href="#scenarios">Сценарии</a></li>
+        <li class="nav-item"><a class="nav-link" href="#crypto">СКЗИ</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pay">Оплата</a></li>
+        <li class="nav-item"><a class="nav-link" href="#ask">Просим</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-wrapper">
+    <div class="page-body">
+      <div class="container-xl">
+
+        <!-- HERO -->
+        <div class="card mt-3 section-anchor" id="hero">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-layers-intersect text-blue"></i> Virtu рядом с Импульсом</h3>
+            <div class="card-subtitle">Брифинг для архитектора РГС · 21.10.2026</div>
+          </div>
+          <div class="card-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-lg-8">
+                <p class="mb-0">
+                  <span class="hero-tagline">Не конкурируем с платформой — снимаем с неё лишнее.</span>
+                </p>
+              </div>
+              <div class="col-lg-4">
+                <div class="border rounded p-3 h-100">
+                  <div class="subheader mb-1">Период цифр</div>
+                  <div class="fw-bold">01.01 – 20.10.2026</div>
+                  <div class="text-secondary small mt-1">Боевая база полисов РГС · октябрь неполный</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLATFORM OVERVIEW -->
+        <div class="card mt-3 section-anchor" id="platform">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-building text-blue"></i> Платформа Virtu у Росгосстраха</h3>
+            <div class="card-subtitle">Партнёрский канал · общая картина до детализации 2026</div>
+          </div>
+          <div class="card-body">
+            <div class="row g-3 mb-3">
+              <div class="col-6 col-md-3">
+                <div class="h1 mb-0">80+</div>
+                <div class="text-secondary small">основных продуктов</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="h1 mb-0">1&nbsp;300+</div>
+                <div class="text-secondary small">версий продуктов</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="h1 mb-0">70&nbsp;000+</div>
+                <div class="text-secondary small">полисов ежемесячно</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="h1 mb-0">10+ млрд</div>
+                <div class="text-secondary small">₽ премий в год</div>
+              </div>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                  <div class="fw-bold mb-1"><i class="ti ti-car me-1 text-blue"></i>Авто</div>
+                  <div class="text-secondary small">14 продуктов · 26 версий</div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                  <div class="fw-bold mb-1"><i class="ti ti-heartbeat me-1 text-red"></i>ДМС и НС</div>
+                  <div class="text-secondary small">26 продуктов · 831 версия</div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                  <div class="fw-bold mb-1"><i class="ti ti-plane me-1 text-azure"></i>ВЗР</div>
+                  <div class="text-secondary small">7 продуктов · 314 версий</div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                  <div class="fw-bold mb-1"><i class="ti ti-home me-1 text-green"></i>ИФЛ</div>
+                  <div class="text-secondary small">31 продукт · 139 версий</div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="text-secondary small">
+                  <strong class="text-body">Virtu Systems</strong> — долгосрочный ИТ-партнёр РГС: знает процессы, интеграции и требования ДИТ/бизнеса.
+                  Проектная команда ведёт сопровождение действующих и разработку новых продуктов.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="text-secondary small">
+                  Техподдержка — более 100 обращений в сутки, 24/7.
+                  Инфраструктурный блок обеспечивает работу платформ, серверов, сетей и приложений, в т.ч. защиту ПДн.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI -->
+        <div class="row row-deck row-cards mt-3">
+          <div class="col-sm-6 col-lg-3">
+            <div class="card"><div class="card-body">
+              <div class="subheader">Продажи 2026 · все каналы</div>
+              <div class="h1 mb-0">1 090 372</div>
+              <div class="kpi-delta text-blue mt-1">действующих/акцепт. 900 086</div>
+            </div></div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card"><div class="card-body">
+              <div class="subheader">Через API</div>
+              <div class="h1 mb-0">485 761</div>
+              <div class="kpi-delta text-green mt-1">45% от всех продаж</div>
+            </div></div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card"><div class="card-body">
+              <div class="subheader">Интеграции / продукты</div>
+              <div class="h1 mb-0">738 <span class="text-secondary fs-3">/ 151</span></div>
+              <div class="kpi-delta text-purple mt-1">топ-5 интеграций = 86% API</div>
+            </div></div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card"><div class="card-body">
+              <div class="subheader">МВД + ММЦ (СКЗИ)</div>
+              <div class="h1 mb-0">148 966</div>
+              <div class="kpi-delta text-azure mt-1">31% от API · 13,7% от всех продаж</div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- POSITION / 6 ROLES -->
+        <div class="card mt-3 section-anchor" id="roles">
+          <div class="card-header"><h3 class="card-title"><i class="ti ti-layers-intersect text-blue"></i> 6 предложений оставить платформу Virtu в целевой архитектуре РГС</h3></div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <i class="ti ti-calculator role-icon text-blue"></i>
+                <h4 class="mb-1">Калькулятор + печать</h4>
+                <div class="text-secondary">Импульс — интерфейс и учёт. Virtu считает тариф и печатает полис.</div>
+              </div>
+              <div class="col-md-4">
+                <i class="ti ti-api role-icon text-azure"></i>
+                <h4 class="mb-1">Готовые API-партнёры</h4>
+                <div class="text-secondary">45% продаж 2026 идут через интеграции. Работающие доступы не переписываем.</div>
+              </div>
+              <div class="col-md-4">
+                <i class="ti ti-lock role-icon text-red"></i>
+                <h4 class="mb-1">СКЗИ-каналы</h4>
+                <div class="text-secondary">МВД (ViPNet) и ММЦ (КриптоПро) — сертифицированный контур, не «просто перенести код».</div>
+              </div>
+              <div class="col-md-4">
+                <i class="ti ti-credit-card role-icon text-green"></i>
+                <h4 class="mb-1">Онлайн-оплата</h4>
+                <div class="text-secondary">Три приёмника: Сбер (через Jarvis: ДМС, ИФЛ, ипотека + продукт Legioncom), шлюз РГС (ВЗР), ТКБ (~48 продуктов). Кассу не дублируем первой.</div>
+              </div>
+              <div class="col-md-4">
+                <i class="ti ti-rocket role-icon text-yellow"></i>
+                <h4 class="mb-1">Быстрый MVP</h4>
+                <div class="text-secondary">Пример скорости: новая интеграция «Госуслуги Дом» с мая 2026 набрала 65 368 полисов на уже готовом API Virtu — без ожидания доработок Импульса.</div>
+              </div>
+              <div class="col-md-4">
+                <i class="ti ti-database-export role-icon text-purple"></i>
+                <h4 class="mb-1">Поток в Импульс</h4>
+                <div class="text-secondary">Virtu выпускает → Импульс видит договоры. ≈113 218 записей/мес.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORG PATH -->
+        <div class="card mt-3 section-anchor" id="org">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-route text-blue"></i> Оргпуть · Симакин 20.10.2026</h3>
+            <div class="card-subtitle">Эта встреча — шаг 1: техконцепт, не «оставьте нас»</div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 infographic-step">
+                <div class="icon-wrap">
+                  <span class="step-num">1</span>
+                  <i class="ti ti-topology-star-3"></i>
+                </div>
+                <h4>Григорьев Денис</h4>
+                <div class="text-secondary">Архитектор. Техконцепт. Финального «да» не принимает. Писать можно напрямую.</div>
+              </div>
+              <div class="col-md-4 infographic-step">
+                <div class="icon-wrap">
+                  <span class="step-num">2</span>
+                  <i class="ti ti-briefcase"></i>
+                </div>
+                <h4>Бизнес · Евдокимова</h4>
+                <div class="text-secondary">Нужна позиция бизнеса: какие продукты и роли оставить на Virtu (калькулятор, СКЗИ, API, оплата). Не путать с платформой партнёров на Импульсе.</div>
+              </div>
+              <div class="col-md-4 infographic-step">
+                <div class="icon-wrap">
+                  <span class="step-num">3</span>
+                  <i class="ti ti-gavel"></i>
+                </div>
+                <h4>Крымова + Шайхотаров</h4>
+                <div class="text-secondary">Только после техники и бизнеса. Крымова — правление, Импульс, процессы.</div>
+              </div>
+            </div>
+            <div class="alert alert-warning mt-3 mb-0">
+              <div class="d-flex"><div><i class="ti ti-alert-triangle me-2"></i></div>
+              <div><strong>Стоп:</strong> без поддержки бизнеса к Крымовой не ходить.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FACTS / CHANNELS -->
+        <div class="row row-deck row-cards mt-3 section-anchor" id="facts">
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header"><h3 class="card-title"><i class="ti ti-chart-bar text-blue"></i> Продажи по каналам</h3></div>
+              <div class="card-body"><div id="chartChannels" class="chart-box chart-box-lg"></div></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-header"><h3 class="card-title"><i class="ti ti-chart-donut text-blue"></i> Структура 2026</h3></div>
+              <div class="card-body">
+                <div id="chartChannelPie" class="chart-box chart-box-sm"></div>
+                <ul class="pie-legend">
+                  <li>
+                    <span class="dot" style="background:#206bc4"></span>
+                    <span class="name">API</span>
+                    <span class="val">485 761</span>
+                    <span class="share">44,6%</span>
+                  </li>
+                  <li>
+                    <span class="dot" style="background:#4299e1"></span>
+                    <span class="name">Портал</span>
+                    <span class="val">482 234</span>
+                    <span class="share">44,2%</span>
+                  </li>
+                  <li>
+                    <span class="dot" style="background:#ae3ec9"></span>
+                    <span class="name">Загрузчик</span>
+                    <span class="val">122 367</span>
+                    <span class="share">11,2%</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-3">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-arrows-split-2 text-blue"></i> Каналы продаж</h3>
+            <div class="card-subtitle">Как полис попал в реестр</div>
+          </div>
+          <div class="card-body channel-legend">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="ch-card">
+                  <div class="d-flex align-items-start gap-3">
+                    <i class="ti ti-api ch-icon text-blue"></i>
+                    <div>
+                      <h4>API</h4>
+                      <div class="ch-meta">Интеграции партнёров</div>
+                    </div>
+                  </div>
+                  <div class="ch-body">Полис выпущен партнёрской или сервисной интеграцией (МВД, Госуслуги Дом, энергосбыты и др.) — без ручной продажи в интерфейсе.</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="ch-card">
+                  <div class="d-flex align-items-start gap-3">
+                    <i class="ti ti-layout-dashboard ch-icon text-azure"></i>
+                    <div>
+                      <h4>Портал</h4>
+                      <div class="ch-meta">Агент / оператор</div>
+                    </div>
+                  </div>
+                  <div class="ch-body">Продажа через портал продаж: агент или оператор оформляет полис в интерфейсе.</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="ch-card" style="border-color: var(--tblr-purple);">
+                  <div class="d-flex align-items-start gap-3">
+                    <i class="ti ti-file-upload ch-icon text-purple"></i>
+                    <div>
+                      <h4>Загрузчик</h4>
+                      <div class="ch-meta">Пакетная загрузка</div>
+                    </div>
+                  </div>
+                  <div class="ch-body">Полисы загружены файлом/пакетом в базу — не онлайн-интеграция и не клик в портале. Часто Гость и ВЗР.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row row-cards mt-3 loader-pair align-items-stretch">
+          <div class="col-lg-5">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="ti ti-folders text-purple"></i> Загрузчик · по семействам</h3>
+                <div class="card-subtitle">122 367 полисов · 11,2% всех каналов · в скобках — число учёток-источников</div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-vcenter card-table table-sm table-loader">
+                  <thead><tr><th>Семейство</th><th class="text-end">Полисов</th><th class="text-end">Доля</th></tr></thead>
+                  <tbody><tr><td>Гость <span class='text-secondary'>(~12 источн.)</span></td><td class='text-end'>46 341</td><td class='text-end'>38%</td></tr><tr><td>ВЗР / Поездка <span class='text-secondary'>(~9 источн.)</span></td><td class='text-end'>34 591</td><td class='text-end'>28%</td></tr><tr><td>Прочее <span class='text-secondary'>(~18 источн.)</span></td><td class='text-end'>33 902</td><td class='text-end'>28%</td></tr><tr><td>Гость — ММЦ <span class='text-secondary'>(~6 источн.)</span></td><td class='text-end'>7 249</td><td class='text-end'>6%</td></tr><tr><td>ДПГ <span class='text-secondary'>(~2 источн.)</span></td><td class='text-end'>284</td><td class='text-end'>0%</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="ti ti-list-details text-purple"></i> Загрузчик · топ продуктов</h3>
+                <div class="card-subtitle">В основном Гость (МЦ / ММЦ) и ВЗР / Поездка</div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-vcenter card-table table-sm table-loader">
+                  <thead><tr><th>Продукт</th><th class="text-end">Полисов</th></tr></thead>
+                  <tbody><tr><td>Гость_2022_РФ_СПб_МЦ_загрузчик</td><td class='text-end'>43 790</td></tr><tr><td>Поехали 2.0</td><td class='text-end'>32 420</td></tr><tr><td>Поездка_ВЗР_краткосрочные_ВТБ_100 000</td><td class='text-end'>23 171</td></tr><tr><td>Гость_2016_ММЦ Калуга_загрузчик</td><td class='text-end'>5 709</td></tr><tr><td>Поездка_ВЗР_краткосрочные_ВТБ_50 000</td><td class='text-end'>4 954</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="text-secondary small px-1">
+              <strong>Семейство</strong> — укрупнённая группа (Гость, ВЗР, ДПГ…).
+              <strong>Продукт</strong> — конкретная линейка внутри семейства (как в базе: название тарифа / программы).
+              Обе таблицы — один канал «загрузчик», разный срез.
+              <br><strong>Прочее</strong> в семействах: Поехали 2.0, Поехали 2.0 (РФ), Защита экрана.
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-3">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-calendar-stats text-blue"></i> Статистика продаж по системе · помесячно</h3>
+            <div class="card-subtitle">Акты Мастер-системы vs действующие/акцептованные в базе · расхождение в пределах ±1,3…6,5%</div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-vcenter card-table table-sm">
+              <thead><tr><th>Месяц</th><th class="text-end">Акты</th><th class="text-end">База</th><th class="text-end">Δ</th></tr></thead>
+              <tbody><tr><td>2026-01</td><td class='text-end'>127 632</td><td class='text-end'>126 038</td><td class='text-end text-success'>-1,2%</td></tr><tr><td>2026-02</td><td class='text-end'>126 546</td><td class='text-end'>124 638</td><td class='text-end text-success'>-1,5%</td></tr><tr><td>2026-03</td><td class='text-end'>97 633</td><td class='text-end'>100 454</td><td class='text-end text-success'>+2,9%</td></tr><tr><td>2026-04</td><td class='text-end'>98 472</td><td class='text-end'>92 503</td><td class='text-end text-warning'>-6,1%</td></tr><tr><td>2026-05</td><td class='text-end'>80 248</td><td class='text-end'>77 409</td><td class='text-end text-warning'>-3,5%</td></tr><tr><td>2026-06</td><td class='text-end'>85 199</td><td class='text-end'>83 538</td><td class='text-end text-success'>-1,9%</td></tr><tr><td>2026-07</td><td class='text-end'>80 659</td><td class='text-end'>82 486</td><td class='text-end text-success'>+2,3%</td></tr><tr><td>2026-08</td><td class='text-end'>83 251</td><td class='text-end'>77 872</td><td class='text-end text-warning'>-6,5%</td></tr><tr><td>2026-09</td><td class='text-end'>80 250</td><td class='text-end'>78 561</td><td class='text-end text-success'>-2,1%</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- API DETAIL -->
+        <div class="row row-deck row-cards mt-3 section-anchor" id="api">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="ti ti-chart-area-line text-blue"></i> API по месяцам · топ интеграций</h3>
+                <div class="card-subtitle">Остальное свёрнуто в «Прочие»</div>
+              </div>
+              <div class="card-body"><div id="chartMonthly" class="chart-box chart-box-lg"></div></div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="ti ti-chart-bar text-blue"></i> Топ-12 API-интеграций</h3>
+                <div class="card-subtitle">Полисы 2026 по убыванию · топ-5 интеграций = 86% API</div>
+              </div>
+              <div class="card-body"><div id="chartTop" class="chart-box chart-box-lg"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-3">
+          <div class="card-header"><h3 class="card-title"><i class="ti ti-table text-blue"></i> Топ-10 интеграций — таблица</h3></div>
+          <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+              <thead><tr><th>Партнёр / продукт</th><th>Учётка</th><th class="text-end">Полисов</th><th class="text-end">Доля API</th><th>СКЗИ</th></tr></thead>
+              <tbody><tr><td>ФГУП ПВС МВД (Гость/ДПГ, ViPNet)</td><td class='text-secondary'><code>fgpu.api</code></td><td class='text-end'>134 990</td><td class='text-end'>27,8%</td><td><span class="badge bg-red-lt">ViPNet</span></td></tr><tr><td>Займер (ФЗ Микрокредит)</td><td class='text-secondary'><code>fz.zaymer2_api</code></td><td class='text-end'>98 281</td><td class='text-end'>20,2%</td><td></td></tr><tr><td>Новосибирскэнергосбыт (Экспресс-защита жилья)</td><td class='text-secondary'><code>EZZHvCNovosib_API</code></td><td class='text-end'>95 672</td><td class='text-end'>19,7%</td><td></td></tr><tr><td>Госуслуги Дом (Защита квартиры)</td><td class='text-secondary'><code>Gosuslugi_api</code></td><td class='text-end'>65 368</td><td class='text-end'>13,5%</td><td></td></tr><tr><td>Кэшмагнит (ФЗ Микрокредит)</td><td class='text-secondary'><code>keshmagnit.API</code></td><td class='text-end'>24 217</td><td class='text-end'>5,0%</td><td></td></tr><tr><td>ММЦ Сахарово (Гость, КриптоПро)</td><td class='text-secondary'><code>PartnerGbuMmc</code></td><td class='text-end'>13 976</td><td class='text-end'>2,9%</td><td><span class="badge bg-orange-lt">КриптоПро</span></td></tr><tr><td>МКК Медиумскор (ФЗ Микрокредит)</td><td class='text-secondary'><code>a.kutin</code></td><td class='text-end'>10 329</td><td class='text-end'>2,1%</td><td></td></tr><tr><td>Жилфондсервис (Экспресс-защита жилья)</td><td class='text-secondary'><code>Zhilfondservis_API</code></td><td class='text-end'>10 282</td><td class='text-end'>2,1%</td><td></td></tr><tr><td>МКК Выдадим (ФЗ Микрокредит)</td><td class='text-secondary'><code>mkkvydadim.api</code></td><td class='text-end'>6 549</td><td class='text-end'>1,3%</td><td></td></tr><tr><td>ЕРЦ-Финансовая логистика (Экспресс-защита жилья)</td><td class='text-secondary'><code>ERC_API</code></td><td class='text-end'>4 881</td><td class='text-end'>1,0%</td><td></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mt-3 fam-sync">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-stack-2 text-blue"></i> Семейства продуктов × каналы</h3>
+            <div class="card-subtitle">Полисы 2026 · график и сводка в одном ритме</div>
+          </div>
+          <div class="card-body">
+            <div class="fam-legend">
+              <span><i style="background:#206bc4"></i>API</span>
+              <span><i style="background:#4299e1"></i>Портал</span>
+              <span><i style="background:#2fb344"></i>Загрузчик</span>
+            </div>
+            <div class="row g-3 align-items-stretch">
+              <div class="col-lg-7">
+                <div id="chartFam" class="chart-box chart-box-fam"></div>
+              </div>
+              <div class="col-lg-5">
+                <div class="table-responsive">
+                  <table class="table table-vcenter table-sm table-fam mb-0">
+                    <thead>
+                      <tr>
+                        <th>Семейство</th>
+                        <th class="text-end">API</th>
+                        <th class="text-end">Портал</th>
+                        <th class="text-end">Загрузчик</th>
+                        <th class="text-end">Всего</th>
+                        <th class="text-end">Доля API</th>
+                      </tr>
+                    </thead>
+                    <tbody><tr><td class='fam-name'>НС «Финансовая защита» (ФЗ)</td><td class='text-end text-nowrap'>140 201</td><td class='text-end text-nowrap'>42 950</td><td class='text-end text-nowrap'>0</td><td class='text-end text-nowrap fw-bold'>183 151</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>77%</span><span class='fam-bar' aria-hidden='true'><span style='width:77%'></span></span></div></td></tr><tr><td class='fam-name'>Гость</td><td class='text-end text-nowrap'>134 724</td><td class='text-end text-nowrap'>116 427</td><td class='text-end text-nowrap'>46 341</td><td class='text-end text-nowrap fw-bold'>297 492</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>45%</span><span class='fam-bar' aria-hidden='true'><span style='width:45%'></span></span></div></td></tr><tr><td class='fam-name'>Экспресс-защита жилья</td><td class='text-end text-nowrap'>115 269</td><td class='text-end text-nowrap'>435</td><td class='text-end text-nowrap'>0</td><td class='text-end text-nowrap fw-bold'>115 704</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>100%</span><span class='fam-bar' aria-hidden='true'><span style='width:100%'></span></span></div></td></tr><tr><td class='fam-name'>Защита квартиры</td><td class='text-end text-nowrap'>65 368</td><td class='text-end text-nowrap'>1</td><td class='text-end text-nowrap'>0</td><td class='text-end text-nowrap fw-bold'>65 369</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>100%</span><span class='fam-bar' aria-hidden='true'><span style='width:100%'></span></span></div></td></tr><tr><td class='fam-name'>Гость — ММЦ</td><td class='text-end text-nowrap'>13 976</td><td class='text-end text-nowrap'>26</td><td class='text-end text-nowrap'>7 249</td><td class='text-end text-nowrap fw-bold'>21 251</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>66%</span><span class='fam-bar' aria-hidden='true'><span style='width:66%'></span></span></div></td></tr><tr><td class='fam-name'>ОСАГО/КАСКО GW</td><td class='text-end text-nowrap'>9 697</td><td class='text-end text-nowrap'>276 986</td><td class='text-end text-nowrap'>0</td><td class='text-end text-nowrap fw-bold'>286 683</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>3%</span><span class='fam-bar' aria-hidden='true'><span style='width:3%'></span></span></div></td></tr><tr><td class='fam-name'>ВЗР / Поездка</td><td class='text-end text-nowrap'>5 033</td><td class='text-end text-nowrap'>23 459</td><td class='text-end text-nowrap'>34 591</td><td class='text-end text-nowrap fw-bold'>63 083</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>8%</span><span class='fam-bar' aria-hidden='true'><span style='width:8%'></span></span></div></td></tr><tr><td class='fam-name'>ДПГ</td><td class='text-end text-nowrap'>1 131</td><td class='text-end text-nowrap'>4 598</td><td class='text-end text-nowrap'>284</td><td class='text-end text-nowrap fw-bold'>6 013</td><td class='fam-share'><div class='d-flex align-items-center justify-content-end gap-2'><span class='text-nowrap'>19%</span><span class='fam-bar' aria-hidden='true'><span style='width:19%'></span></span></div></td></tr></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIOS -->
+        <div class="card mt-3 section-anchor" id="scenarios">
+          <div class="card-header"><h3 class="card-title"><i class="ti ti-messages text-blue"></i> Три сценария диалога + объёмы</h3></div>
+          <div class="card-body">
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <div class="card card-sm"><div class="card-body">
+                  <div class="d-flex align-items-start gap-3">
+                    <i class="ti ti-rocket scenario-ico text-blue"></i>
+                    <div class="min-w-0">
+                      <div class="fw-bold">MVP на Virtu</div>
+                      <div class="text-secondary small mt-1">Партнёры уже в API. Команда Virtu подключает продукт без ожидания ёмкости Импульса.</div>
+                      <div class="h2 mb-1 mt-3">65 368</div>
+                      <div class="text-secondary small">Госуслуги Дом с мая 2026</div>
+                    </div>
+                  </div>
+                </div></div>
+              </div>
+              <div class="col-md-4">
+                <div class="card card-sm"><div class="card-body">
+                  <div class="d-flex align-items-start gap-3">
+                    <i class="ti ti-plug-connected scenario-ico text-azure"></i>
+                    <div class="min-w-0">
+                      <div class="fw-bold">Интеграции остаются</div>
+                      <div class="text-secondary small mt-1">Не переписываем СКЗИ и работающие контуры — экономия команды Импульса.</div>
+                      <div class="h2 mb-1 mt-3">148 966</div>
+                      <div class="text-secondary small">минимум МВД+ММЦ · 31% API</div>
+                    </div>
+                  </div>
+                </div></div>
+              </div>
+              <div class="col-md-4">
+                <div class="card card-sm"><div class="card-body">
+                  <div class="d-flex align-items-start gap-3">
+                    <i class="ti ti-database-export scenario-ico text-purple"></i>
+                    <div class="min-w-0">
+                      <div class="fw-bold">Выгрузка в Импульс</div>
+                      <div class="text-secondary small mt-1">Virtu выпускает; Импульс — единый учёт договоров. Линейка целиком или частично на Virtu.</div>
+                      <div class="h2 mb-1 mt-3">≈113 218</div>
+                      <div class="text-secondary small">записей/мес · всего 1 090 372 за период</div>
+                    </div>
+                  </div>
+                </div></div>
+              </div>
+            </div>
+            <div id="chartScenario" class="chart-box chart-box-sm"></div>
+            <div class="alert alert-info mt-3 mb-0">
+              <strong>Калькулятор:</strong> предлагаем оставить <em>тарификацию и печать</em> на Virtu — закрепить это решение, а не изобретать заново.
+            </div>
+          </div>
+        </div>
+
+        <!-- CRYPTO -->
+        <div class="row row-deck row-cards mt-3 section-anchor" id="crypto">
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="ti ti-shield-lock text-red"></i> МВД · Гость</h3>
+                <div class="card-subtitle">Сертифицированный контур ViPNet</div>
+              </div>
+              <div class="card-body">
+                <dl class="row mb-0">
+                  <dt class="col-5 text-secondary">Партнёр</dt><dd class="col-7">ФГУП ПВС МВД</dd>
+                  <dt class="col-5 text-secondary">Защита канала</dt><dd class="col-7">ViPNet</dd>
+                  <dt class="col-5 text-secondary">Продажи API 2026</dt><dd class="col-7"><strong>134 990</strong> · 99 продуктов</dd>
+                  <dt class="col-5 text-secondary">Доля API</dt><dd class="col-7">28%</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="ti ti-certificate text-orange"></i> ММЦ Сахарово · Гость</h3>
+                <div class="card-subtitle">Сертифицированный контур КриптоПро</div>
+              </div>
+              <div class="card-body">
+                <dl class="row mb-0">
+                  <dt class="col-5 text-secondary">Продукт</dt><dd class="col-7">Гость_ММЦ_Сахарово</dd>
+                  <dt class="col-5 text-secondary">Защита канала</dt><dd class="col-7">КриптоПро</dd>
+                  <dt class="col-5 text-secondary">Продажи API 2026</dt><dd class="col-7"><strong>13 976</strong></dd>
+                  <dt class="col-5 text-secondary">+ загрузчик</dt><dd class="col-7">7 249 того же продукта</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header"><h3 class="card-title"><i class="ti ti-chart-line text-red"></i> МВД и ММЦ по месяцам</h3></div>
+              <div class="card-body"><div id="chartCrypto" class="chart-box"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAY + PIPELINE -->
+        <div class="card mt-3 section-anchor" id="pay">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-credit-card text-green"></i> Онлайн-оплата</h3>
+            <div class="card-subtitle">Кто даёт ссылку на оплату и чей банк / шлюз принимает деньги · по карте подключений Virtu</div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-vcenter card-table pay-table">
+              <thead>
+                <tr>
+                  <th>Контур Virtu</th>
+                  <th>Кто даёт ссылку</th>
+                  <th>Платёжный шлюз / банк</th>
+                  <th>Продукты</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Jarvis</strong></td>
+                  <td>Virtu регистрирует платёж → ссылку возвращает платёжный сервис Jarvis</td>
+                  <td><strong>Сбербанк</strong> (мерчант РГС)</td>
+                  <td>ДМС, ИФЛ-коробка, ипотека · плюс <strong>Legioncom</strong> — партнёрский продукт в Virtu (не шлюз)</td>
+                </tr>
+                <tr>
+                  <td><strong>Эквайринг РГС</strong></td>
+                  <td>Virtu считает и сохраняет полис, оплату уводит в шлюз РГС</td>
+                  <td><strong>Платёжный шлюз РГС</strong></td>
+                  <td>ВЗР / «Поездка» и связанные travel-продукты</td>
+                </tr>
+                <tr>
+                  <td><strong>ТКБ</strong></td>
+                  <td>Virtu создаёт заказ на оплату; ссылка / оплата — на стороне банка</td>
+                  <td><strong>Банк ТКБ</strong> (не Сбер)</td>
+                  <td><strong>~48 продуктов</strong>: авто, Гость, имущество, ДМС/телемед, ипотека, ВЗР и др. Перенос = переподключить каждый</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-body pt-2 pb-2">
+            <div class="text-secondary small mb-3">
+              Три разных приёмника денег: <strong>Сбер</strong> (через Jarvis), <strong>шлюз РГС</strong> (ВЗР/travel), <strong>ТКБ</strong> (массовые продукты).
+              Legioncom — продукт/партнёрская линейка в Virtu, не платёжная система.
+            </div>
+            <div class="pipeline-block">
+              <h4 class="mb-3">Путь выпуска</h4>
+              <div class="pipeline">
+                <div class="pipe-item"><i class="ti ti-api text-blue"></i> Партнёр / портал</div>
+                <span class="arrow"><i class="ti ti-chevron-right"></i></span>
+                <div class="pipe-item"><i class="ti ti-lock text-red"></i> СКЗИ</div>
+                <span class="arrow"><i class="ti ti-chevron-right"></i></span>
+                <div class="pipe-item"><i class="ti ti-calculator text-azure"></i> Расчёт</div>
+                <span class="arrow"><i class="ti ti-chevron-right"></i></span>
+                <div class="pipe-item"><i class="ti ti-credit-card text-green"></i> Оплата</div>
+                <span class="arrow"><i class="ti ti-chevron-right"></i></span>
+                <div class="pipe-item"><i class="ti ti-printer text-purple"></i> Печать</div>
+                <span class="arrow"><i class="ti ti-chevron-right"></i></span>
+                <div class="pipe-item"><i class="ti ti-database text-yellow"></i> База → Импульс</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ASK -->
+        <div class="card mt-3 section-anchor" id="ask">
+          <div class="card-header">
+            <h3 class="card-title"><i class="ti ti-checklist text-blue"></i> Что просим зафиксировать</h3>
+            <div class="card-subtitle">Virtu рядом с Импульсом — не вместо него</div>
+          </div>
+          <ol class="ask-list">
+            <li><span class="ask-n">1</span><span>Virtu — слой расчёта, печати, СКЗИ, оплаты и быстрого MVP <strong>рядом</strong> с Импульсом, не вместо него.</span></li>
+            <li><span class="ask-n">2</span><span>Virtu в целевой архитектуре для <strong>API-продуктов</strong>.</span></li>
+            <li><span class="ask-n">3</span><span>Система <strong>резервного выпуска</strong> полисов с загрузкой в Импульс.</span></li>
+            <li><span class="ask-n">4</span><span>Доадаптация Virtu под новый ИТ-ландшафт РГС: ИИ-помощники, интеграции с авторизацией и клиентами, 1С ЗУП и др.</span></li>
+          </ol>
+        </div>
+
+        <div class="card mt-3 mb-2">
+          <div class="card-header"><h3 class="card-title"><i class="ti ti-info-circle text-blue"></i> Как считали</h3></div>
+          <div class="card-body text-secondary small">
+            <ul class="mb-0">
+              <li>Боевой реестр полисов РГС, период 01.01–20.10.2026, только чтение.</li>
+              <li>Каналы: API — интеграции; портал — оформление в интерфейсе; загрузчик — пакетная загрузка в реестр.</li>
+              <li>Не включено: суммы премий, прогноз экономики сценариев, ручная разборка «личных» учёток агентов.</li>
+              <li>Динамика ФЗ (Займер / Кэшмагнит): падение с весны — причина в данных не видна, вопрос к бизнесу.</li>
+            </ul>
+          </div>
+        </div>
+
+        <footer class="page-foot">
+          Virtu Systems · материалы для архитектора РГС · продажи 2026
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/echarts.min.js"></script>
+  <script src="vendor/tabler.min.js"></script>
+  <script>
+  const D = {"months": ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт"], "monthsFull": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10"], "monthlySeries": {"ФГУП ПВС МВД (Гость/ДПГ, ViPNet)": [6732, 14238, 20246, 23902, 18021, 14806, 11892, 8616, 9952, 6585], "Займер (ФЗ Микрокредит)": [58430, 38910, 933, 8, 0, 0, 0, 0, 0, 0], "Новосибирскэнергосбыт (Экспресс-защита жилья)": [8857, 9315, 9965, 9645, 9562, 9657, 9630, 9736, 10378, 8927], "Госуслуги Дом (Защита квартиры)": [0, 0, 0, 0, 1424, 10365, 13391, 13830, 14351, 12007], "Кэшмагнит (ФЗ Микрокредит)": [8376, 9207, 5853, 781, 0, 0, 0, 0, 0, 0], "Прочие": [9026, 10472, 9992, 8236, 5844, 5869, 5390, 4782, 4709, 2913]}, "seriesPartners": ["ФГУП ПВС МВД (Гость/ДПГ, ViPNet)", "Займер (ФЗ Микрокредит)", "Новосибирскэнергосбыт (Экспресс-защита жилья)", "Госуслуги Дом (Защита квартиры)", "Кэшмагнит (ФЗ Микрокредит)", "Прочие"], "channels": ["API", "Портал", "Загрузчик"], "chSeries": {"API": [91421, 82142, 46989, 42572, 34851, 40697, 40303, 36964, 39390, 30432], "Портал": [41571, 48366, 59649, 57696, 48642, 48826, 46398, 48209, 47743, 35134], "Загрузчик": [9138, 13353, 16809, 14006, 11123, 13204, 14952, 12632, 11315, 5835]}, "topPartners": ["ВМС сайт (Поездка)", "Ренткапитал (Экспресс-защита жилья)", "ЕРЦ-Финансовая логистика (Экспресс-защита жилья)", "МКК Выдадим (ФЗ Микрокредит)", "Жилфондсервис (Экспресс-защита жилья)", "МКК Медиумскор (ФЗ Микрокредит)", "ММЦ Сахарово (Гость, КриптоПро)", "Кэшмагнит (ФЗ Микрокредит)", "Госуслуги Дом (Защита квартиры)", "Новосибирскэнергосбыт (Экспресс-защита жилья)", "Займер (ФЗ Микрокредит)", "ФГУП ПВС МВД (Гость/ДПГ, ViPNet)"], "topValues": [1948, 2003, 4881, 6549, 10282, 10329, 13976, 24217, 65368, 95672, 98281, 134990], "famLabels": ["НС «Финансовая защита» (ФЗ)", "Гость", "Экспресс-защита жилья", "Защита квартиры", "Гость — ММЦ", "ОСАГО/КАСКО GW", "ВЗР / Поездка", "ДПГ"], "famAPI": [140201, 134724, 115269, 65368, 13976, 9697, 5033, 1131], "famPortal": [42950, 116427, 435, 1, 26, 276986, 23459, 4598], "famLoader": [0, 46341, 0, 0, 7249, 0, 34591, 284], "mvd": [6732, 14238, 20246, 23902, 18021, 14806, 11892, 8616, 9952, 6585], "mmc": [1279, 1588, 1488, 1634, 2236, 2231, 1361, 869, 759, 531], "concX": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50], "concY": [27.7893861384508, 48.02176378918851, 67.7170460370429, 81.17386945432013, 86.15924291987211, 89.0363779718833, 91.16273229015916, 93.27941106840608, 94.62760493329024, 95.63242005842379, 96.04476275369987, 96.44578300851654, 96.78545622229862, 97.02260988428466, 97.23341313938336, 97.4170425373795, 97.58173258042535, 97.72748326852094, 97.8528535637896, 97.94302136235721, 98.02660155920299, 98.10894658072591, 98.18305710009655, 98.25263864328343, 98.31336809665659, 98.37121547427644, 98.42885698934249, 98.48629264185475, 98.53693483009134, 98.58551839278988, 98.63183746739652, 98.67445101603464, 98.71644697701133, 98.75123774860477, 98.7860285201982, 98.81978997902262, 98.85211039997036, 98.88093115750338, 98.90831087715975, 98.93569059681613, 98.96224686625727, 98.98571519739131, 99.00918352852534, 99.03162254689035, 99.05220880227108, 99.07217746999038, 99.09194027515589, 99.11108549265997, 99.12981898505645, 99.1483466148991], "channelPie": [{"name": "API", "value": 485761}, {"name": "Портал", "value": 482234}, {"name": "Загрузчик", "value": 122367}], "scenario": [{"name": "API всего", "value": 485761}, {"name": "МВД+ММЦ", "value": 148966}, {"name": "Госуслуги Дом", "value": 65368}, {"name": "Все каналы", "value": 1090372}]};
+  const blue = '#206bc4';
+  const palette = ['#206bc4','#4299e1','#ae3ec9','#d6336c','#f76707','#f59f00','#2fb344','#667382'];
+
+  function init(id, option) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const c = echarts.init(el);
+    c.setOption(option);
+    window.addEventListener('resize', () => c.resize());
+  }
+
+  init('chartChannels', {
+    tooltip: { trigger: 'axis' },
+    legend: { top: 0 },
+    grid: { left: 50, right: 20, top: 40, bottom: 30 },
+    xAxis: { type: 'category', data: D.months },
+    yAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed' } } },
+    series: D.channels.map((name, i) => ({
+      name, type: 'bar', stack: 'ch', emphasis: { focus: 'series' },
+      itemStyle: { color: palette[i] },
+      data: D.chSeries[name]
+    }))
+  });
+
+  init('chartChannelPie', {
+    tooltip: {
+      trigger: 'item',
+      formatter: (p) => p.name + ' — ' + p.value.toLocaleString('ru-RU') + '  (' + p.percent.toFixed(1).replace('.', ',') + '%)'
+    },
+    series: [{
+      type: 'pie', radius: ['42%', '68%'], center: ['50%', '48%'],
+      label: {
+        formatter: (p) => p.name + '\n' + p.percent.toFixed(1).replace('.', ',') + ' %',
+        lineHeight: 18,
+        fontSize: 12,
+        color: '#333'
+      },
+      labelLine: { length: 12, length2: 10 },
+      data: D.channelPie,
+      color: [palette[0], palette[1], palette[2]]
+    }]
+  });
+
+  init('chartMonthly', {
+    tooltip: { trigger: 'axis' },
+    legend: { type: 'scroll', top: 0 },
+    grid: { left: 50, right: 20, top: 48, bottom: 30 },
+    xAxis: { type: 'category', data: D.months },
+    yAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed' } } },
+    series: D.seriesPartners.map((name, i) => ({
+      name, type: 'line', stack: 'tot', areaStyle: { opacity: 0.15 },
+      smooth: true, showSymbol: false,
+      itemStyle: { color: palette[i % palette.length] },
+      data: D.monthlySeries[name]
+    }))
+  });
+
+  init('chartTop', {
+    tooltip: { trigger: 'axis' },
+    grid: { left: 160, right: 40, top: 10, bottom: 20 },
+    xAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed' } } },
+    yAxis: { type: 'category', data: D.topPartners, axisLabel: { width: 150, overflow: 'truncate' } },
+    series: [{ type: 'bar', data: D.topValues, itemStyle: { color: blue, borderRadius: [0,3,3,0] },
+      label: { show: true, position: 'right', formatter: (p) => p.value.toLocaleString('ru-RU') } }]
+  });
+
+  init('chartFam', {
+    tooltip: { trigger: 'axis' },
+    legend: { show: false },
+    grid: { left: 8, right: 16, top: 8, bottom: 8, containLabel: true },
+    yAxis: {
+      type: 'category',
+      data: D.famLabels.slice().reverse(),
+      axisLabel: { width: 148, overflow: 'break', interval: 0, lineHeight: 14, fontSize: 11 },
+      axisTick: { show: false },
+      axisLine: { show: false }
+    },
+    xAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed' } }, axisLabel: { hideOverlap: true } },
+    series: [
+      { name: 'API', type: 'bar', stack: 'f', barCategoryGap: '28%', data: D.famAPI.slice().reverse(), itemStyle: { color: palette[0] } },
+      { name: 'Портал', type: 'bar', stack: 'f', data: D.famPortal.slice().reverse(), itemStyle: { color: palette[1] } },
+      { name: 'Загрузчик', type: 'bar', stack: 'f', data: D.famLoader.slice().reverse(), itemStyle: { color: palette[6] } }
+    ]
+  });
+
+  init('chartCrypto', {
+    tooltip: { trigger: 'axis' },
+    legend: { top: 0 },
+    grid: { left: 50, right: 20, top: 40, bottom: 30 },
+    xAxis: { type: 'category', data: D.months },
+    yAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed' } } },
+    series: [
+      { name: 'МВД', type: 'line', smooth: true, itemStyle: { color: '#d63939' }, data: D.mvd },
+      { name: 'ММЦ', type: 'line', smooth: true, itemStyle: { color: '#f76707' }, data: D.mmc }
+    ]
+  });
+
+  init('chartScenario', {
+    tooltip: { trigger: 'item' },
+    grid: { left: 120, right: 40, top: 10, bottom: 20 },
+    xAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed' } } },
+    yAxis: { type: 'category', data: D.scenario.map(s => s.name).reverse() },
+    series: [{ type: 'bar', data: D.scenario.map(s => s.value).reverse(),
+      itemStyle: { color: (p) => palette[p.dataIndex % palette.length], borderRadius: [0,3,3,0] },
+      label: { show: true, position: 'right', formatter: (p) => p.value.toLocaleString('ru-RU') } }]
+  });
+  </script>
+</body>
+</html>
