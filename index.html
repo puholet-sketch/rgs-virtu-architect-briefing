@@ -445,7 +445,7 @@
               <div class="col-md-4">
                 <i class="ti ti-credit-card role-icon text-green"></i>
                 <h4 class="mb-1">Онлайн-оплата</h4>
-                <div class="text-secondary">Три приёмника: Сбер (через Jarvis: ДМС, ИФЛ, ипотека + продукт Legioncom), шлюз РГС (ВЗР), ТКБ (~48 продуктов). Кассу не дублируем первой.</div>
+                <div class="text-secondary">Рабочие контуры: шлюз РГС (ВЗР), банк ТКБ (~48 продуктов) и отдельный контур Jarvis. ДМС/ИФЛ через Сбер в VFOS не идут; Legioncom закрыт. Кассу не дублируем первой.</div>
               </div>
               <div class="col-md-4">
                 <i class="ti ti-rocket role-icon text-yellow"></i>
@@ -579,7 +579,7 @@
                       <div class="ch-meta">Пакетная загрузка</div>
                     </div>
                   </div>
-                  <div class="ch-body">Полисы загружены файлом/пакетом в базу — не онлайн-интеграция и не клик в портале. Часто Гость и ВЗР.</div>
+                  <div class="ch-body">Партнёры заводят полисы файлом (Excel/пакет) → в учёт. Крупный объём — ВТБ по ВЗР (32 701 / 27% загрузчика). Не онлайн-API и не клик в портале.</div>
                 </div>
               </div>
             </div>
@@ -605,7 +605,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><i class="ti ti-list-details text-purple"></i> Загрузчик · топ продуктов</h3>
-                <div class="card-subtitle">В основном Гость (МЦ / ММЦ) и ВЗР / Поездка</div>
+                <div class="card-subtitle">Гость (МЦ / ММЦ), ВЗР / Поездка · в т.ч. крупные объёмы ВТБ через Excel-загрузку</div>
               </div>
               <div class="table-responsive">
                 <table class="table table-vcenter card-table table-sm table-loader">
@@ -803,7 +803,7 @@
         <div class="card mt-3 section-anchor" id="pay">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-credit-card text-green"></i> Онлайн-оплата</h3>
-            <div class="card-subtitle">Кто даёт ссылку на оплату и чей банк / шлюз принимает деньги · по карте подключений Virtu</div>
+            <div class="card-subtitle">Кто даёт ссылку на оплату и чей банк / шлюз принимает деньги · уточнено с аналитиком Virtu</div>
           </div>
           <div class="table-responsive">
             <table class="table table-vcenter card-table pay-table">
@@ -812,35 +812,42 @@
                   <th>Контур Virtu</th>
                   <th>Кто даёт ссылку</th>
                   <th>Платёжный шлюз / банк</th>
-                  <th>Продукты</th>
+                  <th>Продукты / статус</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>Jarvis</strong></td>
-                  <td>Virtu регистрирует платёж → ссылку возвращает платёжный сервис Jarvis</td>
-                  <td><strong>Сбербанк</strong> (мерчант РГС)</td>
-                  <td>ДМС, ИФЛ-коробка, ипотека · плюс <strong>Legioncom</strong> — партнёрский продукт в Virtu (не шлюз)</td>
-                </tr>
-                <tr>
                   <td><strong>Эквайринг РГС</strong></td>
                   <td>Virtu считает и сохраняет полис, оплату уводит в шлюз РГС</td>
                   <td><strong>Платёжный шлюз РГС</strong></td>
-                  <td>ВЗР / «Поездка» и связанные travel-продукты</td>
+                  <td>ВЗР / travel. Сбера в VFOS на этом контуре нет — снят ~год назад</td>
                 </tr>
                 <tr>
                   <td><strong>ТКБ</strong></td>
                   <td>Virtu создаёт заказ на оплату; ссылка / оплата — на стороне банка</td>
-                  <td><strong>Банк ТКБ</strong> (не Сбер)</td>
+                  <td><strong>Банк ТКБ</strong></td>
                   <td><strong>~48 продуктов</strong>: авто, Гость, имущество, ДМС/телемед, ипотека, ВЗР и др. Перенос = переподключить каждый</td>
+                </tr>
+                <tr>
+                  <td><strong>Jarvis</strong></td>
+                  <td>Отдельный платёжный контур Virtu (регистрация платежа → ссылка)</td>
+                  <td>Уточняется</td>
+                  <td>ДМС и ИФЛ через Сбер в VFOS <strong>не</strong> проходят. <strong>Legioncom закрыт</strong>. Актуальный состав продуктов — на уточнении</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div class="card-body pt-2 pb-2">
             <div class="text-secondary small mb-3">
-              Три разных приёмника денег: <strong>Сбер</strong> (через Jarvis), <strong>шлюз РГС</strong> (ВЗР/travel), <strong>ТКБ</strong> (массовые продукты).
-              Legioncom — продукт/партнёрская линейка в Virtu, не платёжная система.
+              Рабочие опорные контуры оплаты: <strong>шлюз РГС</strong> (ВЗР) и <strong>ТКБ</strong> (массовые продукты).
+              Ранее фигурировавшая связка «Jarvis → Сбер: ДМС / ИФЛ / Legioncom» по подтверждению аналитика неактуальна.
+            </div>
+            <div class="border rounded p-3 mb-3">
+              <div class="fw-bold mb-1"><i class="ti ti-world text-teal me-1"></i>Сайт и цифровые сценарии</div>
+              <div class="text-secondary small mb-0">
+                Через контур Virtu также идут продажи <strong>сертификатов ВБ</strong> и <strong>ВЗР</strong> с сайта,
+                а также <strong>постактивация «Клещ»</strong> через сайт партнёра.
+              </div>
             </div>
             <div class="pipeline-block">
               <h4 class="mb-3">Путь выпуска</h4>
