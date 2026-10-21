@@ -544,7 +544,7 @@
                 <div class="col-md-4">
                   <i class="ti ti-credit-card role-icon text-green"></i>
                   <h4 class="mb-1">Онлайн-оплата</h4>
-                  <div class="text-secondary">Рабочие контуры: шлюз РГС (ВЗР), банк ТКБ (~48 продуктов) и отдельный контур Jarvis. ДМС/ИФЛ через Сбер в VFOS не идут; Legioncom закрыт. Кассу не дублируем первой.</div>
+                  <div class="text-secondary">Рабочие контуры: ПШ РГС (ВЗР и авто через Jarvis), банк ТКБ (~48 продуктов). ДМС/ИФЛ через Сбер в VFOS не идут; Legioncom закрыт. Кассу не дублируем первой.</div>
                 </div>
                 <div class="col-md-4">
                   <i class="ti ti-rocket role-icon text-yellow"></i>
@@ -884,9 +884,15 @@
               <tbody>
                 <tr>
                   <td><strong>Эквайринг РГС</strong></td>
-                  <td>Virtu считает и сохраняет полис, оплату уводит в шлюз РГС</td>
-                  <td><strong>Платёжный шлюз РГС</strong></td>
+                  <td>Virtu считает и сохраняет полис, оплату уводит в ПШ РГС</td>
+                  <td><strong>ПШ РГС</strong></td>
                   <td>ВЗР / travel. Сбера в VFOS на этом контуре нет — снят ~год назад</td>
+                </tr>
+                <tr>
+                  <td><strong>Jarvis</strong></td>
+                  <td>Virtu регистрирует платёж в контуре Jarvis → ссылка / оплата через ПШ РГС</td>
+                  <td><strong>ПШ РГС</strong></td>
+                  <td><strong>Авто-продукты</strong> с оплатой в платёжном шлюзе РГС. (ДМС/ИФЛ через Сбер в VFOS не идут; Legioncom закрыт.)</td>
                 </tr>
                 <tr>
                   <td><strong>ТКБ</strong></td>
@@ -894,19 +900,12 @@
                   <td><strong>Банк ТКБ</strong></td>
                   <td><strong>~48 продуктов</strong>: авто, Гость, имущество, ДМС/телемед, ипотека, ВЗР и др. Перенос = переподключить каждый</td>
                 </tr>
-                <tr>
-                  <td><strong>Jarvis</strong></td>
-                  <td>Отдельный платёжный контур Virtu (регистрация платежа → ссылка)</td>
-                  <td>Уточняется</td>
-                  <td>ДМС и ИФЛ через Сбер в VFOS <strong>не</strong> проходят. <strong>Legioncom закрыт</strong>. Актуальный состав продуктов — на уточнении</td>
-                </tr>
               </tbody>
             </table>
           </div>
           <div class="card-body pt-2 pb-2">
             <div class="text-secondary small mb-3">
-              Рабочие опорные контуры оплаты: <strong>шлюз РГС</strong> (ВЗР) и <strong>ТКБ</strong> (массовые продукты).
-              Ранее фигурировавшая связка «Jarvis → Сбер: ДМС / ИФЛ / Legioncom» по подтверждению аналитика неактуальна.
+              Опорные контуры: <strong>ПШ РГС</strong> — ВЗР (эквайринг) и <strong>авто через Jarvis</strong>; плюс <strong>ТКБ</strong> (массовые продукты).
             </div>
             <div class="border rounded p-3 mb-3">
               <div class="fw-bold mb-1"><i class="ti ti-world text-teal me-1"></i>Сайт и цифровые сценарии</div>
