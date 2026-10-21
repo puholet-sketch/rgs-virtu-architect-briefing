@@ -342,9 +342,27 @@
       #hero { border-radius: var(--tblr-border-radius); }
     }
     @media print {
-      .sticky-nav { position: static; }
-      .card { break-inside: avoid; }
-      body { background: #fff; }
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
+      .sticky-nav { display: none !important; }
+      body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page-wrapper .page-body { padding: 0 !important; }
+      .section-anchor {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+        margin-top: 8mm !important;
+      }
+      #hero { margin-top: 0 !important; border-radius: 4px !important; }
+      .card { break-inside: avoid-page; page-break-inside: avoid; box-shadow: none !important; }
+      .chart-box { height: 220px !important; }
+      .chart-box-lg { height: 240px !important; }
+      .chart-box-sm, .fam-sync .chart-box-fam { height: 200px !important; }
+      .fam-sync .table-fam { height: auto !important; }
+      .fam-sync .table-fam tbody, .fam-sync .table-fam tbody tr { height: auto !important; }
+      footer.page-foot { display: none; }
+      a { text-decoration: none; color: inherit; }
     }
   </style>
 </head>
@@ -375,8 +393,9 @@
         <!-- HERO -->
         <div class="card mt-0 section-anchor" id="hero">
           <div class="card-header">
-            <h3 class="card-title"><i class="ti ti-layers-intersect text-blue"></i> Virtu рядом с Импульсом</h3>
-            <div class="card-subtitle">Брифинг для архитектора РГС · 21.10.2026</div>
+            <h3 class="card-title"><i class="ti ti-layers-intersect text-blue"></i> ВИРТУ в усиление Импульсу</h3>
+            <div class="card-subtitle">ресурсно и платформенно</div>
+            <div class="text-secondary small mt-1">Брифинг для архитектора РГС · 21.10.2026</div>
           </div>
           <div class="card-body">
             <div class="row g-3 align-items-center">
@@ -906,10 +925,10 @@
         <div class="card mt-3 section-anchor" id="ask">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-checklist text-blue"></i> Что просим зафиксировать</h3>
-            <div class="card-subtitle">Virtu рядом с Импульсом — не вместо него</div>
+            <div class="card-subtitle">ВИРТУ в усиление Импульсу — ресурсно и платформенно</div>
           </div>
           <ol class="ask-list">
-            <li><span class="ask-n">1</span><span>Virtu — слой расчёта, печати, СКЗИ, оплаты и быстрого MVP <strong>рядом</strong> с Импульсом, не вместо него.</span></li>
+            <li><span class="ask-n">1</span><span>Virtu — слой расчёта, печати, СКЗИ, оплаты и быстрого MVP <strong>в усиление</strong> Импульсу, ресурсно и платформенно.</span></li>
             <li><span class="ask-n">2</span><span>Virtu в целевой архитектуре для <strong>API-продуктов</strong>.</span></li>
             <li><span class="ask-n">3</span><span>Система <strong>резервного выпуска</strong> полисов с загрузкой в Импульс.</span></li>
             <li><span class="ask-n">4</span><span>Доадаптация Virtu под новый ИТ-ландшафт РГС: ИИ-помощники, интеграции с авторизацией и клиентами, 1С ЗУП и др.</span></li>
