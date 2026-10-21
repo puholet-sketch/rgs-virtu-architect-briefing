@@ -58,20 +58,20 @@
       padding-top: .5rem;
       padding-bottom: 1.5rem;
     }
-    #intro {
+    .deck-block {
       display: flex;
       flex-direction: column;
       gap: .75rem;
+    }
+    .deck-block > .card,
+    .deck-block > .row {
+      margin-top: 0 !important;
     }
     #intro > .card:first-child,
     #hero {
       margin-top: 0 !important;
       border-top-left-radius: 0;
       border-top-right-radius: 0;
-    }
-    #intro #platform,
-    #intro #kpi {
-      margin-top: 0 !important;
     }
     .sticky-nav + .page-wrapper {
       margin-top: 0;
@@ -385,11 +385,11 @@
       </div>
       <ul class="nav ms-auto flex-wrap align-items-center">
         <li class="nav-item"><a class="nav-link" href="#intro">Старт</a></li>
-        <li class="nav-item"><a class="nav-link" href="#facts">Факты</a></li>
-        <li class="nav-item"><a class="nav-link" href="#api">API</a></li>
-        <li class="nav-item"><a class="nav-link" href="#scenarios">Сценарии</a></li>
-        <li class="nav-item"><a class="nav-link" href="#crypto">СКЗИ</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pay">Оплата</a></li>
+        <li class="nav-item"><a class="nav-link" href="#roles">Роли</a></li>
+        <li class="nav-item"><a class="nav-link" href="#channels_story">Каналы</a></li>
+        <li class="nav-item"><a class="nav-link" href="#api_story">API</a></li>
+        <li class="nav-item"><a class="nav-link" href="#keep_story">Сценарии</a></li>
+        <li class="nav-item"><a class="nav-link" href="#close">Оплата</a></li>
         <li class="nav-item"><a class="nav-link" href="#ask">Просим</a></li>
       </ul>
     </div>
@@ -399,8 +399,8 @@
     <div class="page-body">
       <div class="container-xl">
 
-        <!-- INTRO = hero + platform + KPI (один экран для PDF/PPTX) -->
-        <div class="section-anchor" id="intro">
+        <!-- INTRO = hero + platform + KPI -->
+        <div class="deck-block section-anchor" id="intro">
           <div class="card mt-0" id="hero">
             <div class="card-header">
               <h3 class="card-title"><i class="ti ti-layers-intersect text-blue"></i> ВИРТУ в усиление Импульсу</h3>
@@ -563,8 +563,9 @@
           </div>
         </div>
 
-        <!-- FACTS / CHANNELS -->
-        <div class="row row-deck row-cards mt-3 section-anchor" id="facts">
+        <!-- CHANNELS STORY = facts + channels + loader + recon -->
+        <div class="deck-block section-anchor mt-3" id="channels_story">
+        <div class="row row-deck row-cards" id="facts">
           <div class="col-lg-8">
             <div class="card">
               <div class="card-header"><h3 class="card-title"><i class="ti ti-chart-bar text-blue"></i> Продажи по каналам</h3></div>
@@ -601,7 +602,7 @@
           </div>
         </div>
 
-        <div class="card mt-3 section-anchor" id="channels">
+        <div class="card" id="channels">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-arrows-split-2 text-blue"></i> Каналы продаж</h3>
             <div class="card-subtitle">Как полис попал в реестр</div>
@@ -648,7 +649,7 @@
           </div>
         </div>
 
-        <div class="row row-cards mt-3 loader-pair align-items-stretch section-anchor" id="loader">
+        <div class="row row-cards loader-pair align-items-stretch" id="loader">
           <div class="col-lg-5">
             <div class="card">
               <div class="card-header">
@@ -687,7 +688,7 @@
           </div>
         </div>
 
-        <div class="card mt-3 section-anchor" id="recon">
+        <div class="card" id="recon">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-calendar-stats text-blue"></i> Статистика продаж по системе · помесячно</h3>
           </div>
@@ -698,9 +699,11 @@
             </table>
           </div>
         </div>
+        </div>
 
-        <!-- API DETAIL -->
-        <div class="row row-deck row-cards mt-3 section-anchor" id="api">
+        <!-- API STORY = api + families -->
+        <div class="deck-block section-anchor mt-3" id="api_story">
+        <div class="row row-deck row-cards" id="api">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
@@ -731,7 +734,7 @@
           </div>
         </div>
 
-        <div class="card mt-3 fam-sync section-anchor" id="families">
+        <div class="card fam-sync" id="families">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-stack-2 text-blue"></i> Семейства продуктов × каналы</h3>
             <div class="card-subtitle">Полисы 2026 · график и сводка в одном ритме</div>
@@ -766,9 +769,11 @@
             </div>
           </div>
         </div>
+        </div>
 
-        <!-- SCENARIOS -->
-        <div class="card mt-3 section-anchor" id="scenarios">
+        <!-- KEEP = scenarios + crypto -->
+        <div class="deck-block section-anchor mt-3" id="keep_story">
+        <div class="card" id="scenarios">
           <div class="card-header"><h3 class="card-title"><i class="ti ti-messages text-blue"></i> Три сценария диалога + объёмы</h3></div>
           <div class="card-body">
             <div class="row g-3 mb-3">
@@ -819,8 +824,7 @@
           </div>
         </div>
 
-        <!-- CRYPTO -->
-        <div class="row row-deck row-cards mt-3 section-anchor" id="crypto">
+        <div class="row row-deck row-cards" id="crypto">
           <div class="col-lg-6">
             <div class="card">
               <div class="card-header">
@@ -860,9 +864,11 @@
             </div>
           </div>
         </div>
+        </div>
 
-        <!-- PAY + PIPELINE -->
-        <div class="card mt-3 section-anchor" id="pay">
+        <!-- CLOSE = pay + ask + how -->
+        <div class="deck-block section-anchor mt-3" id="close">
+        <div class="card" id="pay">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-credit-card text-green"></i> Онлайн-оплата</h3>
             <div class="card-subtitle">Кто даёт ссылку на оплату и чей банк / шлюз принимает деньги · уточнено с аналитиком Virtu</div>
@@ -930,8 +936,7 @@
           </div>
         </div>
 
-        <!-- ASK -->
-        <div class="card mt-3 section-anchor" id="ask">
+        <div class="card" id="ask">
           <div class="card-header">
             <h3 class="card-title"><i class="ti ti-checklist text-blue"></i> Что просим зафиксировать</h3>
             <div class="card-subtitle">ВИРТУ в усиление Импульсу — ресурсно и платформенно</div>
@@ -944,7 +949,7 @@
           </ol>
         </div>
 
-        <div class="card mt-3 mb-2">
+        <div class="card mb-0" id="howto">
           <div class="card-header"><h3 class="card-title"><i class="ti ti-info-circle text-blue"></i> Как считали</h3></div>
           <div class="card-body text-secondary small">
             <ul class="mb-0">
@@ -954,6 +959,7 @@
               <li>Динамика ФЗ (Займер / Кэшмагнит): падение с весны — причина в данных не видна, вопрос к бизнесу.</li>
             </ul>
           </div>
+        </div>
         </div>
 
         <footer class="page-foot">
